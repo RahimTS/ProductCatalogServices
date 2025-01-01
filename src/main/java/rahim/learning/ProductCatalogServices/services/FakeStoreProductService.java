@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -54,7 +53,6 @@ public class FakeStoreProductService implements IProductService {
 
     @Override
     public Product replaceProduct(Long productId, Product request) {
-        RestTemplate restTemplate = restTemplateBuilder.build();
         FakeStoreProductDto fakeStoreProductRequest = from(request);
 
         FakeStoreProductDto response = requestForEntity("https://fakestoreapi.com/products/{productId}", HttpMethod.PUT,

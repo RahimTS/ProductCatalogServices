@@ -13,7 +13,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import rahim.learning.ProductCatalogServices.dtos.FakeStoreProductDto;
-import rahim.learning.ProductCatalogServices.models.Product;
 
 @Component
 public class FakeStoreApiClient {
