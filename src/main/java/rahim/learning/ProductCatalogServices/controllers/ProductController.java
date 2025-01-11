@@ -1,6 +1,7 @@
 package rahim.learning.ProductCatalogServices.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -19,20 +20,26 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
 
+    @Qualifier("fkps")
     @Autowired
-    private IProductService productService;
+    private IProductService productService1;
 
+    @Qualifier("sps")
+    @Autowired
+    private IProductService productService2;
+
+    // Retrieve all products
     @GetMapping
     public List<ProductDto> getAllProducts() {
         List<ProductDto> productDtos = new ArrayList<>();
-        List<Product> products = productService.getAllProducts();
+        List<Product> products = productService2.getAllProducts();
         for (Product product : products) {
             productDtos.add(from(product));
         }
-
         return productDtos;
     }
 
+    // Retrieve a product by its ID
     @GetMapping("{productId}")
     public ResponseEntity<ProductDto> findProductById(@PathVariable Long productId) {
         try {
@@ -40,27 +47,37 @@ public class ProductController {
 
             if (productId <= 0) {
                 headers.add("called by", "rahim");
-                // return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
                 throw new IllegalArgumentException("Please try with productId > 0");
             }
 
-            Product product = productService.getProductById(productId);
+            Product product = productService2.getProductById(productId);
             headers.add("called by", "intelligent");
-            if (product == null)
-                return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
+            if (product == null) {
+                return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
+            }
             return new ResponseEntity<>(from(product), headers, HttpStatus.OK);
         } catch (IllegalArgumentException exception) {
             throw exception;
         }
     }
 
-    @PutMapping("/{id}")
-    public ProductDto replaceProduct(@PathVariable Long id, @RequestBody ProductDto request) {
-        Product productRequest = from(request);
-        Product product = productService.replaceProduct(id, productRequest);
-        return from(product);
+    // Create a new product
+    @PostMapping
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
+        Product inputProduct = from(productDto);
+        Product savedProduct = productService2.save(inputProduct);
+        return new ResponseEntity<>(from(savedProduct), HttpStatus.CREATED);
     }
 
+    // Update an existing product
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductDto> replaceProduct(@PathVariable Long id, @RequestBody ProductDto productDto) {
+        Product productRequest = from(productDto);
+        Product updatedProduct = productService1.replaceProduct(id, productRequest);
+        return new ResponseEntity<>(from(updatedProduct), HttpStatus.OK);
+    }
+
+    // Convert ProductDto to Product
     private Product from(ProductDto productDto) {
         Product product = new Product();
         product.setId(productDto.getId());
@@ -68,19 +85,17 @@ public class ProductController {
         product.setPrice(productDto.getPrice());
         product.setImageUrl(productDto.getImageUrl());
         product.setDescription(productDto.getDescription());
+
         if (productDto.getCategory() != null) {
             Category category = new Category();
+            category.setId(productDto.getCategory().getId());
             category.setName(productDto.getCategory().getName());
             product.setCategory(category);
         }
         return product;
     }
 
-    @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        return product;
-    }
-
+    // Convert Product to ProductDto
     private ProductDto from(Product product) {
         ProductDto productDto = new ProductDto();
         productDto.setId(product.getId());
@@ -88,14 +103,14 @@ public class ProductController {
         productDto.setDescription(product.getDescription());
         productDto.setPrice(product.getPrice());
         productDto.setImageUrl(product.getImageUrl());
+
         if (product.getCategory() != null) {
             CategoryDto categoryDto = new CategoryDto();
-            categoryDto.setName(product.getCategory().getName());
             categoryDto.setId(product.getCategory().getId());
+            categoryDto.setName(product.getCategory().getName());
             categoryDto.setDescription(product.getCategory().getDescription());
             productDto.setCategory(categoryDto);
         }
         return productDto;
     }
-
 }

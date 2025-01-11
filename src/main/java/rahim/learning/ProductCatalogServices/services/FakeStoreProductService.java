@@ -19,7 +19,7 @@ import rahim.learning.ProductCatalogServices.dtos.FakeStoreProductDto;
 import rahim.learning.ProductCatalogServices.models.Category;
 import rahim.learning.ProductCatalogServices.models.Product;
 
-@Service
+@Service("fkps")
 public class FakeStoreProductService implements IProductService {
 
     @Autowired
@@ -59,6 +59,11 @@ public class FakeStoreProductService implements IProductService {
                 fakeStoreProductRequest, FakeStoreProductDto.class, productId).getBody();
 
         return from(response);
+    }
+
+    @Override
+    public Product save(Product product) {
+        return null;
     }
 
     private <T> ResponseEntity<T> requestForEntity(String url, HttpMethod httpMethod, @Nullable Object request,
