@@ -1,6 +1,7 @@
 package rahim.learning.ProductCatalogServices.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import rahim.learning.ProductCatalogServices.models.Product;
 import rahim.learning.ProductCatalogServices.repos.ProductRepo;
@@ -10,6 +11,7 @@ import java.util.Optional;
 
 
 @Service("sps")
+@Primary
 public class StorageProductService implements IProductService {
 
     @Autowired

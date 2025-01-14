@@ -20,11 +20,11 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
 
-    @Qualifier("fkps")
+/*    @Qualifier("fkps")
     @Autowired
-    private IProductService productService1;
+    private IProductService productService1;*/
 
-    @Qualifier("sps")
+    //@Qualifier("sps")
     @Autowired
     private IProductService productService2;
 
@@ -73,7 +73,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<ProductDto> replaceProduct(@PathVariable Long id, @RequestBody ProductDto productDto) {
         Product productRequest = from(productDto);
-        Product updatedProduct = productService1.replaceProduct(id, productRequest);
+        Product updatedProduct = productService2.replaceProduct(id, productRequest);
         return new ResponseEntity<>(from(updatedProduct), HttpStatus.OK);
     }
 
