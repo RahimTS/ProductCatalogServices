@@ -1,7 +1,6 @@
 package rahim.learning.ProductCatalogServices.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -75,6 +74,13 @@ public class ProductController {
         Product productRequest = from(productDto);
         Product updatedProduct = productService2.replaceProduct(id, productRequest);
         return new ResponseEntity<>(from(updatedProduct), HttpStatus.OK);
+    }
+
+    @GetMapping("{pid}/{uid}")
+    public ProductDto getProductDetailsBasedOnUser(@PathVariable Long pid, @PathVariable Long uid) {
+        Product product = productService2.getProductBasedOnUser(pid, uid);
+        if (product == null) return null;
+        return from(product);
     }
 
     // Convert ProductDto to Product

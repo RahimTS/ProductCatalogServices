@@ -10,4 +10,5 @@ public interface IProductService {
      List<Product> getAllProducts();
      Product replaceProduct(Long productId, Product request);
      Product save(Product product);
+     Product getProductBasedOnUser(Long productId, Long userId);
 }
